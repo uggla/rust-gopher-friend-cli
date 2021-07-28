@@ -1,0 +1,7 @@
+[package]
+edition = "2018"
+name = "rust-gopher-friend-cli"
+version = "0.1.0"
+[dependencies]
+minreq = { version = "2.4.2", features = ["https-rustls-probe"] }
+structopt = "0.3.22"
