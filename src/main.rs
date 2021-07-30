@@ -23,7 +23,7 @@ enum Command {
 }
 
 enum Error {
-    NotFound(String),
+    GopherNotFound(String),
     Response(String),
     IO(String),
 }
@@ -51,7 +51,10 @@ fn get_gopher(gopher: String) -> Result<String, Error> {
         output_file.write_all(response.as_bytes())?;
         Ok(format!("Perfect! Just saved in {}", &file_name))
     } else {
-        Err(Error::NotFound(format!("Gopher {} not exists", gopher)))
+        Err(Error::GopherNotFound(format!(
+            "Gopher {} not exists",
+            gopher
+        )))
     }
 }
 
@@ -65,9 +68,8 @@ fn main() {
     match cmd {
         Command::Get { gopher } => match get_gopher(gopher) {
             Ok(msg) => println!("{}", msg),
-            Err(Error::NotFound(msg)) => eprintln!("{}", msg),
+            Err(Error::GopherNotFound(msg)) => eprintln!("{}", msg),
             Err(Error::Response(msg)) => display_error_and_exit(msg),
-
             Err(Error::IO(msg)) => display_error_and_exit(msg),
         },
         Command::Completion { shell } => {
