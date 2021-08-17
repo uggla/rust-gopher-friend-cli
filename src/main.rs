@@ -1,8 +1,9 @@
 mod gopher;
 
 use gopher::*;
-
+use simple_logger::SimpleLogger;
 use std::io::stdout;
+use std::process::exit;
 use structopt::clap::{crate_name, crate_version, Shell};
 use structopt::StructOpt;
 
@@ -25,12 +26,22 @@ enum Command {
     },
 }
 
+fn display_error_and_exit(error_msg: String) {
+    log::error!("{}", error_msg);
+    exit(255)
+}
+
 fn main() {
+    SimpleLogger::new()
+        .with_level(log::LevelFilter::Info)
+        .init()
+        .unwrap();
     let cmd = Command::from_args();
+    log::debug!("{:#?}", cmd);
     match cmd {
         Command::Get { gopher } => match get_gopher(gopher) {
-            Ok(msg) => println!("{}", msg),
-            Err(Error::GopherNotFound(msg)) => eprintln!("{}", msg),
+            Ok(msg) => log::info!("{}", msg),
+            Err(Error::GopherNotFound(msg)) => log::error!("{}", msg),
             Err(Error::Response(msg)) => display_error_and_exit(msg),
             Err(Error::IO(msg)) => display_error_and_exit(msg),
         },

@@ -1,6 +1,5 @@
 use std::fs::File;
 use std::io::Write;
-use std::process::exit;
 
 use crate::BASE_URL;
 
@@ -22,13 +21,8 @@ impl From<std::io::Error> for Error {
     }
 }
 
-pub fn display_error_and_exit(error_msg: String) {
-    eprintln!("{}", error_msg);
-    exit(255)
-}
-
 pub fn get_gopher(gopher: String) -> Result<String, Error> {
-    println!("Try to get {} Gopher...", gopher);
+    log::info!("Try to get {} Gopher...", gopher);
     let url = format!("{}/{}.png", BASE_URL, gopher);
     let response = minreq::get(url).send()?;
 

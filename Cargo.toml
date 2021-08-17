@@ -5,3 +5,5 @@ version = "0.1.0"
 [dependencies]
 minreq = { version = "2.4.2", features = ["https-rustls-probe"] }
 structopt = "0.3.22"
+log = "0.4.14"
+simple_logger = "1.13.0"
