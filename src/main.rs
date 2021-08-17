@@ -5,6 +5,8 @@ use std::process::exit;
 use structopt::clap::{crate_name, crate_version, Shell};
 use structopt::StructOpt;
 
+const BASE_URL: &str = "https://github.com/scraly/gophers/raw/main";
+
 #[derive(StructOpt, Debug)]
 #[structopt(name = "rust-gopher-friend-cli", version = crate_version!(), about = "Gopher CLI application written in Rust.")]
 enum Command {
@@ -42,7 +44,7 @@ impl From<std::io::Error> for Error {
 
 fn get_gopher(gopher: String) -> Result<String, Error> {
     println!("Try to get {} Gopher...", gopher);
-    let url = format!("https://github.com/scraly/gophers/raw/main/{}.png", gopher);
+    let url = format!("{}/{}.png", BASE_URL, gopher);
     let response = minreq::get(url).send()?;
 
     if response.status_code == 200 {
