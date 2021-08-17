@@ -41,7 +41,7 @@ fn main() {
     match cmd {
         Command::Get { gopher } => match get_gopher(gopher) {
             Ok(msg) => log::info!("{}", msg),
-            Err(Error::GopherNotFound(msg)) => log::error!("{}", msg),
+            Err(Error::GopherNotFound(msg)) => display_error_and_exit(msg),
             Err(Error::Response(msg)) => display_error_and_exit(msg),
             Err(Error::IO(msg)) => display_error_and_exit(msg),
         },
