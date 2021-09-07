@@ -1,11 +1,10 @@
-use std::fs::File;
+mod gopher;
+use gopher::*;
+
 use std::io::stdout;
-use std::io::Write;
 use std::process::exit;
 use structopt::clap::{crate_name, crate_version, Shell};
 use structopt::StructOpt;
-
-const BASE_URL: &str = "https://github.com/scraly/gophers/raw/main";
 
 #[derive(StructOpt, Debug)]
 #[structopt(name = "rust-gopher-friend-cli", version = crate_version!(), about = "Gopher CLI application written in Rust.")]
@@ -22,42 +21,6 @@ enum Command {
         #[structopt(possible_values = &["bash", "fish", "zsh", "powershell", "elvish"])]
         shell: Shell,
     },
-}
-
-enum Error {
-    GopherNotFound(String),
-    Response(String),
-    IO(String),
-}
-
-impl From<minreq::Error> for Error {
-    fn from(err: minreq::Error) -> Self {
-        Error::Response(err.to_string())
-    }
-}
-
-impl From<std::io::Error> for Error {
-    fn from(err: std::io::Error) -> Self {
-        Error::IO(err.to_string())
-    }
-}
-
-fn get_gopher(gopher: String) -> Result<String, Error> {
-    println!("Try to get {} Gopher...", gopher);
-    let url = format!("{}/{}.png", BASE_URL, gopher);
-    let response = minreq::get(url).send()?;
-
-    if response.status_code == 200 {
-        let file_name = format!("{}.png", gopher);
-        let mut output_file = File::create(&file_name)?;
-        output_file.write_all(response.as_bytes())?;
-        Ok(format!("Perfect! Just saved in {}", &file_name))
-    } else {
-        Err(Error::GopherNotFound(format!(
-            "Gopher {} not exists",
-            gopher
-        )))
-    }
 }
 
 fn display_error_and_exit(error_msg: String) {
