@@ -7,8 +7,6 @@ use std::process::exit;
 use structopt::clap::{crate_name, crate_version, Shell};
 use structopt::StructOpt;
 
-const BASE_URL: &str = "https://github.com/scraly/gophers/raw/main";
-
 #[derive(StructOpt, Debug)]
 #[structopt(name = "rust-gopher-friend-cli", version = crate_version!(), about = "Gopher CLI application written in Rust.")]
 enum Command {
@@ -36,6 +34,7 @@ fn main() {
         .with_level(log::LevelFilter::Info)
         .init()
         .unwrap();
+
     let cmd = Command::from_args();
     log::debug!("{:#?}", cmd);
     match cmd {

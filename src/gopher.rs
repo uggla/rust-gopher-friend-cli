@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io::Write;
 
-use crate::BASE_URL;
+const BASE_URL: &str = "https://github.com/scraly/gophers/raw/main";
 
 pub enum Error {
     GopherNotFound(String),
