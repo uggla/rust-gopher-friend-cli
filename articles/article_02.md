@@ -607,7 +607,7 @@ We import it.
 use simple_logger::SimpleLogger;
 ```
 
-And initailize it at the beginning of main.
+And initialize it at the beginning of main with the default level set to info.
 ```rust
 fn main() {
     SimpleLogger::new()
@@ -616,3 +616,111 @@ fn main() {
         .unwrap();
 ...
 ```
+
+Now we have just to replace println! and eprintln! macros with the respective ones log::info! and log::error!.
+main.rs
+```rust
+mod gopher;
+
+use gopher::*;
+use simple_logger::SimpleLogger;
+use std::io::stdout;
+use std::process::exit;
+use structopt::clap::{crate_name, crate_version, Shell};
+use structopt::StructOpt;
+
+#[derive(StructOpt, Debug)]
+#[structopt(name = "rust-gopher-friend-cli", version = crate_version!(), about = "Gopher CLI application written in Rust.")]
+enum Command {
+    /// This command will get the desired Gopher
+    Get {
+        /// Gopher type
+        #[structopt()]
+        gopher: String,
+    },
+    /// Generate completion script
+    Completion {
+        /// Shell type
+        #[structopt(possible_values = &["bash", "fish", "zsh", "powershell", "elvish"])]
+        shell: Shell,
+    },
+}
+
+fn display_error_and_exit(error_msg: String) {
+    log::error!("{}", error_msg);
+    exit(255)
+}
+
+fn main() {
+    SimpleLogger::new()
+        .with_level(log::LevelFilter::Info)
+        .init()
+        .unwrap();
+
+    let cmd = Command::from_args();
+    log::debug!("{:#?}", cmd);
+    match cmd {
+        Command::Get { gopher } => match get_gopher(gopher) {
+            Ok(msg) => log::info!("{}", msg),
+            Err(Error::GopherNotFound(msg)) => display_error_and_exit(msg),
+            Err(Error::Response(msg)) => display_error_and_exit(msg),
+            Err(Error::IO(msg)) => display_error_and_exit(msg),
+        },
+        Command::Completion { shell } => {
+            Command::clap().gen_completions_to(crate_name!(), shell, &mut stdout())
+        }
+    }
+}
+```
+gopher.rs
+```rust
+use std::fs::File;
+use std::io::Write;
+
+const BASE_URL: &str = "https://github.com/scraly/gophers/raw/main";
+
+pub enum Error {
+    GopherNotFound(String),
+    Response(String),
+    IO(String),
+}
+
+impl From<minreq::Error> for Error {
+    fn from(err: minreq::Error) -> Self {
+        Error::Response(err.to_string())
+    }
+}
+
+impl From<std::io::Error> for Error {
+    fn from(err: std::io::Error) -> Self {
+        Error::IO(err.to_string())
+    }
+}
+
+pub fn get_gopher(gopher: String) -> Result<String, Error> {
+    log::info!("Try to get {} Gopher...", gopher);
+    let url = format!("{}/{}.png", BASE_URL, gopher);
+    let response = minreq::get(url).send()?;
+
+    if response.status_code == 200 {
+        let file_name = format!("{}.png", gopher);
+        let mut output_file = File::create(&file_name)?;
+        output_file.write_all(response.as_bytes())?;
+        Ok(format!("Perfect! Just saved in {}", &file_name))
+    } else {
+        Err(Error::GopherNotFound(format!(
+            "Gopher {} does not exist",
+            gopher
+        )))
+    }
+}
+```
+
+
+We are done for this article.
+
+All the code is available on my [github](https://github.com/uggla/rust-gopher-friend-cli) account and branches are used to describe the main steps.
+
+Please let me know if you enjoy this article in the comments or on twitter.
+
+See ya.
