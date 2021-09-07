@@ -79,7 +79,6 @@ error[E0308]: mismatched types
    |
    = note:   expected enum `Result<String, Error>`
            found unit type `()`
-
 ...
 ```
 
@@ -139,13 +138,7 @@ error[E0308]: `match` arms have incompatible types
    |
    = note:   expected type `Result<String, Error>`
            found unit type `()`
-
-error: aborting due to previous error
-
-For more information about this error, try `rustc --explain E0308`.
-error: could not compile `rust-gopher-friend-cli`
-
-To learn more, run the command again with --verbose.
+...
 ```
 As we change the definition of our function to return a Result, we also need to change the call in the main function and manage the Result.
 This can be simply done using pattern matching around the get_gopher() function.
@@ -291,7 +284,7 @@ error[E0277]: `?` couldn't convert the error to `Error`
 42 |         let mut output_file = File::create(&file_name)?;
    |                                                       ^ the trait `From<std::io::Error>` is not implemented for `Error`
    |
-
+...
 ```
 
 Add a new kind of error (IO).
@@ -403,9 +396,9 @@ fn main() {
 
 The idea is to move the get_gopher() function into a module.
 The benefits will be to:
-* reduce the size of main.
-* better separate things.
-* module will improve code reusability.
+* Reduce the size of main.
+* Better separate things.
+* Module will improve code reusability.
 
 First, we need to create a gopher.rs file in our src directory. Then we move the error definitions and the get_gopher() function.
 ```rust
@@ -716,6 +709,25 @@ pub fn get_gopher(gopher: String) -> Result<String, Error> {
 }
 ```
 
+### Run example
+#### Run ok
+```bash
+ cargo run -- get friends
+   Compiling rust-gopher-friend-cli v0.1.0 (/home/uggla/workspace/rust/rust-gopher-friend-cli)
+    Finished dev [unoptimized + debuginfo] target(s) in 1.56s
+     Running `target/debug/rust-gopher-friend-cli get friends`
+2021-09-08 01:00:36,294 INFO [rust_gopher_friend_cli::gopher] Try to get friends Gopher...
+2021-09-08 01:00:39,169 INFO [rust_gopher_friend_cli] Perfect! Just saved in friends.png
+```
+
+#### Run with error
+```bash
+ cargo run -- get friendsz
+    Finished dev [unoptimized + debuginfo] target(s) in 0.03s
+     Running `target/debug/rust-gopher-friend-cli get friendsz`
+2021-09-08 01:00:52,245 INFO [rust_gopher_friend_cli::gopher] Try to get friendsz Gopher...
+2021-09-08 01:00:52,943 ERROR [rust_gopher_friend_cli] Gopher friendsz does not exist
+```
 
 We are done with this article.
 
