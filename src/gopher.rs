@@ -22,7 +22,7 @@ impl From<std::io::Error> for Error {
 }
 
 pub fn get_gopher(gopher: String) -> Result<String, Error> {
-    println!("Try to get {} Gopher...", gopher);
+    log::info!("Try to get {} Gopher...", gopher);
     let url = format!("{}/{}.png", BASE_URL, gopher);
     let response = minreq::get(url).send()?;
 
@@ -33,7 +33,7 @@ pub fn get_gopher(gopher: String) -> Result<String, Error> {
         Ok(format!("Perfect! Just saved in {}", &file_name))
     } else {
         Err(Error::GopherNotFound(format!(
-            "Gopher {} not exists",
+            "Gopher {} does not exist",
             gopher
         )))
     }
