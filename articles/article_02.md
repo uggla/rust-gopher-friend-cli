@@ -355,14 +355,14 @@ As write_all() method returns a std::io::Error in case of failure and, we alread
 ## Small refactoring to improve code
 
 ### Specify the BASE_URL
-It will be more convenient to specify the base url to retrieve the gophers.
+It will be more convenient to specify the base URL to retrieve the gophers.
 We can simply define a const at the beginning of our program.
 
 ```rust
 const BASE_URL: &str = "https://github.com/scraly/gophers/raw/main";
 ```
 
-And craft the url variable using the BASE_URL const.
+And craft the URL variable using the BASE_URL const.
 
 ```rust
 fn get_gopher(gopher: String) -> Result<String, Error> {
@@ -405,9 +405,9 @@ The idea is to move the get_gopher() function into a module.
 The benefits will be to:
 * reduce the size of main.
 * better separate things.
-* module will improve code re usability.
+* module will improve code reusability.
 
-First we need to create a gopher.rs file in our src directory. Then we move the error definitions and the get_gopher() function.
+First, we need to create a gopher.rs file in our src directory. Then we move the error definitions and the get_gopher() function.
 ```rust
 const BASE_URL: &str = "https://github.com/scraly/gophers/raw/main";
 
@@ -448,7 +448,7 @@ fn get_gopher(gopher: String) -> Result<String, Error> {
 }
 ```
 
-Of course at this point the compiler is becoming mad because it can not find the get_gopher() funtion and errors definitions.
+Of course, at this point, the compiler is becoming mad because it can not find the get_gopher() function and errors definitions.
 ```rust
 cannot find function `get_gopher` in this scope: not found in this scope
 ```
@@ -464,7 +464,7 @@ We need also to import the function from the gopher module.
 use gopher::*;
 ```
 
-Unfortunately this is still not working as the get_gopher() function is private. We need to change it to public as well as the enum declaration.
+Unfortunately, this is still not working as the get_gopher() function is private. We need to change it to public as well as the enum declaration.
 ```rust
 pub enum Error {
 ...
@@ -472,7 +472,7 @@ pub fn get_gopher(gopher: String) -> Result<String, Error> {
 ...
 ```
 
-After saving most of the errors vanished. There are remaing ones about import not used.
+After saving most of the errors vanished. There are remaining ones about import not used.
 ```rust
 unused import: `std::fs::File`
 unused import: `std::io::Write`
@@ -581,13 +581,13 @@ pub fn get_gopher(gopher: String) -> Result<String, Error> {
 
 The idea here is to remove all println!() and eprintln!() macros and use a simple logger to give information to the user.
 
-First we need to add the required dependencies to our `Cargo.toml`.
+First, we need to add the required dependencies to our `Cargo.toml`.
 We will use the `log` crate as a frontend log facility. Here is an extract of the documentation to understand the purpose of this crate.
 *A logging facade provides a single logging API that abstracts over the actual logging implementation. Libraries can use the logging API provided by this crate, and the consumer of those libraries can choose the logging implementation that is most suitable for its use case.*
 [Sources](https://github.com/rust-lang/log)
 
 
-As a backend facility, we will use the `simple_logger` crate. This create will simply output messages formatted like this `2015-02-24 01:05:20 WARN [logging_example] This is an example message.`
+As a backend facility, we will use the `simple_logger` crate. This crate will simply output messages formatted like this `2015-02-24 01:05:20 WARN [logging_example] This is an example message.`
 I like the crate because it is simple to use and a good fit for small projects. Also, I contributed to another project (rust-riemann-client) maintained by the same author @borntyping (hello Sam) and, it was really a cool experience.
 [Sources](https://github.com/borntyping/rust-simple_logger)
 
@@ -717,10 +717,10 @@ pub fn get_gopher(gopher: String) -> Result<String, Error> {
 ```
 
 
-We are done for this article.
+We are done with this article.
 
 All the code is available on my [github](https://github.com/uggla/rust-gopher-friend-cli) account and branches are used to describe the main steps.
 
-Please let me know if you enjoy this article in the comments or on twitter.
+Please let me know if you enjoy this article in the comments or on Twitter.
 
 See ya.
