@@ -1,16 +1,30 @@
+## Table of Contents
+
+   * [Why this article](#why-this-article)
+   * [Status and goals](#status-and-goals)
+   * [Use our errors](#use-our-errors)
+   * [Small refactoring to improve code](#small-refactoring-to-improve-code)
+      * [Specify the BASE_URL](#specify-the-base_url)
+      * [Factorize errors and send an errorlevel to the OS](#factorize-errors-and-send-an-errorlevel-to-the-os)
+   * [Create a gopher module to separate responsibility into files.](#create-a-gopher-module-to-separate-responsibility-into-files)
+   * [Add a simple logger](#add-a-simple-logger)
+      * [Run example](#run-example)
+         * [Run ok](#run-ok)
+         * [Run with error](#run-with-error)
+
 ## Why this article
 
 This article is {% post https://dev.to/uggla/rust-cli-example-ferris-fetches-go-gopher-postcards-3gb5 %}
 
 second part.
 
-Before starting, I would like to thank everybody who read the previous article. The statistics were encouraging for a first article and fuel my motivation to continue writing new posts.
+Before starting, I would like to thank everybody who read the previous article. The statistics were encouraging for a first article and fueled my motivation to continue writing new posts.
 
-The article was also mentioned in [This week in rust](https://this-week-in-rust.org/) newsletter. So a big thank you to the authors. I can only highly recommend this newsletter as collecting all information about the rust ecosystem, every week, is an amazing job.
+The article was also mentioned in [This week in rust](https://this-week-in-rust.org/) newsletter. So a big thank you to the authors. I can only highly recommend this newsletter as collecting all information about the rust ecosystem every week is a fantastic job.
 
 ## Status and goals
 
-In the previous post, we ended with a working CLI. However, the error management was not well implemented. In most of the case, we want to bubble up the errors and deal with them in the main program function.
+In the previous post, we ended with a working CLI. However, the error management was not well implemented. In most cases, we want to bubble up the errors and deal with them in the main program function.
 
 So this is what we will do now. Then we will improve the code a bit, separate it into files and add a logger.
 
@@ -157,7 +171,7 @@ fn main() {
     }
 }
 ```
-And now the program can compile without errors or warnings.
+And now, the program can compile without errors or warnings.
 So we have defined our error if our gopher is not available. But the get_gother() function can still fail and panic. As an example, if the file cannot be created. In fact, we need to remove all the expect() methods that could make our code panic in the get_gopher() function.
 This can be done using the question mark operator.
 Let's refactor our code and remove the first expect() of the function.
@@ -196,7 +210,7 @@ For more information about this error, try `rustc --explain E0277`.
 ```
 
 However, it gives us what is wrong and explains how to fix the issue. If the send() method fails, it returns a minreq::Error, and our function expects an Error. So we need a conversion. It can be achieved by implementing the From trait.
-So let's do that, first, we need to add this new kind of error (Response) in our Error enum.
+So let's do that. But, first, we need to add this new kind of error (Response) in our Error enum.
 
 ```rust
 enum Error {
@@ -230,7 +244,7 @@ error[E0004]: non-exhaustive patterns: `Err(Response(_))` not covered
     = note: the matched value is of type `Result<String, Error>`
 ```
 
-Rust is really strict, and the pattern matching needs to cover all cases. As we have just introduced a new case (Error::Response), we need to also modify the main function in such way.
+Rust is stringent, and the pattern matching needs to cover all cases. As we have just introduced a new case (Error::Response), we also need to modify the main function in such way.
 
 ```rust
 fn main() {
@@ -248,7 +262,7 @@ fn main() {
 }
 ```
 
-Now the compiler is happy and we don't have errors or warnings anymore.
+Now the compiler is happy, and we don't have errors or warnings anymore.
 We can now get rid of the next expect() and proceed exactly like we just have done before.
 
 ```rust
@@ -343,7 +357,7 @@ fn get_gopher(gopher: String) -> Result<String, Error> {
 }
 ```
 
-As write_all() method returns a std::io::Error in case of failure and, we already implemented this conversion. There is nothing more to do.
+As write_all() method returns a std::io::Error in case of failure, we already implemented this conversion. There is nothing more to do.
 
 ## Small refactoring to improve code
 
@@ -446,13 +460,13 @@ Of course, at this point, the compiler is becoming mad because it can not find t
 cannot find function `get_gopher` in this scope: not found in this scope
 ```
 
-We need to tell it, that it is now in a new module/file.
+We need to tell it that it is now in a new module/file.
 So let's do it in our main file.
 ```rust
 mod gopher;
 ```
 
-We need also to import the function from the gopher module.
+We also need to import the function from the gopher module.
 ```rust
 use gopher::*;
 ```
@@ -465,7 +479,7 @@ pub fn get_gopher(gopher: String) -> Result<String, Error> {
 ...
 ```
 
-After saving most of the errors vanished. There are remaining ones about import not used.
+After saving, most of the errors vanished. There are remaining ones about import not used.
 ```rust
 unused import: `std::fs::File`
 unused import: `std::io::Write`
@@ -576,12 +590,12 @@ The idea here is to remove all println!() and eprintln!() macros and use a simpl
 
 First, we need to add the required dependencies to our `Cargo.toml`.
 We will use the `log` crate as a frontend log facility. Here is an extract of the documentation to understand the purpose of this crate.
-*A logging facade provides a single logging API that abstracts over the actual logging implementation. Libraries can use the logging API provided by this crate, and the consumer of those libraries can choose the logging implementation that is most suitable for its use case.*
+>A logging facade provides a single logging API that abstracts over the actual logging implementation. Libraries can use the logging API provided by this crate, and the consumer of those libraries can choose the logging implementation that is most suitable for its use case.
 [Sources](https://github.com/rust-lang/log)
 
 
 As a backend facility, we will use the `simple_logger` crate. This crate will simply output messages formatted like this `2015-02-24 01:05:20 WARN [logging_example] This is an example message.`
-I like the crate because it is simple to use and a good fit for small projects. Also, I contributed to another project (rust-riemann-client) maintained by the same author @borntyping (hello Sam) and, it was really a cool experience.
+I like the crate because it is simple to use and a good fit for small projects. Also, I contributed to another project (rust-riemann-client) maintained by the same author @borntyping (hello Sam) and, it was really an excellent experience.
 [Sources](https://github.com/borntyping/rust-simple_logger)
 
 
@@ -709,7 +723,7 @@ pub fn get_gopher(gopher: String) -> Result<String, Error> {
 }
 ```
 
-### Run example
+### Run examples
 #### Run ok
 ```bash
  cargo run -- get friends
@@ -728,11 +742,8 @@ pub fn get_gopher(gopher: String) -> Result<String, Error> {
 2021-09-08 01:00:52,245 INFO [rust_gopher_friend_cli::gopher] Try to get friendsz Gopher...
 2021-09-08 01:00:52,943 ERROR [rust_gopher_friend_cli] Gopher friendsz does not exist
 ```
+We reach the end of this article. Please let me know if you enjoy it in the comments or on Twitter.
 
-We are done with this article.
-
-All the code is available on my [github](https://github.com/uggla/rust-gopher-friend-cli) account and branches are used to describe the main steps.
-
-Please let me know if you enjoy this article in the comments or on Twitter.
+All the code is available on my [github](https://github.com/uggla/rust-gopher-friend-cli) account, and branches are used to describe the main steps.
 
 See ya.
