@@ -491,7 +491,7 @@ use std::io::Write;
 ```
 
 So we ended up with the following code:
-main.rs
+main.rs:
 ```rust
 mod gopher;
 use gopher::*;
@@ -625,7 +625,7 @@ fn main() {
 ```
 
 Now we have just to replace println! and eprintln! macros with the respective ones log::info! and log::error!.
-main.rs
+main.rs:
 ```rust
 mod gopher;
 
@@ -679,7 +679,7 @@ fn main() {
     }
 }
 ```
-gopher.rs
+gopher.rs:
 ```rust
 use std::fs::File;
 use std::io::Write;
